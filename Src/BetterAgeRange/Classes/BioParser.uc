@@ -16,7 +16,9 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 
 		[Character Bio]
 		-
-		For now check if the first three lines exist, if they don't this is a custom bio
+		check for the first three lines
+		if they don't exist, or don't match the expected format, this is a custom bio
+		check if the rest of the bio matches a random background for this character
 	*/
 	local string CountryOfOrigin, DateOfBirth, EmptyString, RemainingBackground;
 	local int i; // index of the next newline
@@ -82,7 +84,7 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 			&& (INDEX_NONE != InStr(DateOfBirth, GetLabel(class'XLocalizedData'.default.DateOfBirthBackground)))
 
 				// if the bio matches a random background
-			&& IsRandomBackground(RemainingBackground);
+			&& IsRandomBackground(Unit, RemainingBackground);
 }
 
 static function QuoteLog(const string tag, const string output)
@@ -99,9 +101,50 @@ static function string GetLabel(const string XGParamLoc)
 	return (INDEX_NONE != i) ? Left(XGParamLoc, i) : XGParamLoc;
 }
 
-// compares background against the possible random backgrounds
-// why did I have to make custom characters that matched the rest of the format...
-static function bool IsRandomBackground(string Background)
+// returns the array of all backgrounds for the unit's gender and career
+static function array<string> GetAllBackgroundsForCharacter(XComGameState_Unit Unit)
 {
-	return true;
+	local X2CharacterTemplate CharTemplate;
+
+	CharTemplate = Unit.GetMyTemplate(); // soldier, engineer, or scientist
+
+	if(Unit.kAppearance.iGender == eGender_Male)
+	{
+		return CharTemplate.strCharacterBackgroundMale;
+	}
+	else
+	{
+		return CharTemplate.strCharacterBackgroundFemale;
+	}
+}
+
+
+/**
+	compares background against the possible random backgrounds
+	why did I have to make custom characters that matched the rest of the format...
+
+	* @param Unit			needed to get CountryName and first name
+	* @param Background		Unit.GetBackground() minus the header, since we've already isolated that part
+*/
+static function bool IsRandomBackground(XComGameState_Unit Unit, string Background)
+{
+	local string CountryName, FirstName, GenericBackground;
+	local array<string> AllBackgrounds;
+	local int idx;
+	
+	// reverse-engineer the generic localized background (replace first name and country name)
+	FirstName = Unit.GetFirstName();
+	CountryName = Unit.GetCountryTemplate().DisplayNameWithArticleLower;
+
+	GenericBackground = Repl(Background, CountryName, "<XGParam:StrValue0/!CountryName/>");
+	GenericBackground = Repl(GenericBackground, FirstName, "<XGParam:StrValue1/!FirstName/>");
+
+	QuoteLog("Generic background:", GenericBackground);
+
+	// check against all possible backgrounds for this unit
+	AllBackgrounds = GetAllBackgroundsForCharacter(Unit);
+
+	idx = AllBackgrounds.find(GenericBackground);
+
+	return idx != INDEX_NONE;
 }
