@@ -94,7 +94,7 @@ static function string GetLabel(const string XGParamLoc)
 {
 	local int i;
 	i = InStr(XGParamLoc, "<XGParam:");
-	return Left(XGParamLoc, i);
+	return (INDEX_NONE != i) ? Left(XGParamLoc, i) : XGParamLoc;
 }
 
 // compares background against the possible random backgrounds
