@@ -101,6 +101,34 @@ static function string GetLabel(const string XGParamLoc)
 	return (INDEX_NONE != i) ? Left(XGParamLoc, i) : XGParamLoc;
 }
 
+// grab the first line without much validation
+static function string GetCountryOfOrigin(const string background)
+{
+	local int newline;
+	
+	newline = InStr(background, "\n");
+	if(INDEX_NONE != newline)
+	{
+		return Left(background, newline);
+	}
+	else
+	{
+		return "";
+	}
+}
+
+// grab the backstory sans header
+static function string GetBackstory(const string background)
+{
+	local string Backstory;
+	Backstory = background;
+	Backstory = Split(Backstory, "\n", true);
+	Backstory = Split(Backstory, "\n", true);
+	Backstory = Split(Backstory, "\n", true);
+
+	return Backstory;
+}
+
 // returns the array of all backgrounds for the unit's gender and career
 static function array<string> GetAllBackgroundsForCharacter(XComGameState_Unit Unit)
 {
