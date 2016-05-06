@@ -5,7 +5,7 @@
 class BioParser extends Object;
 
 // returns true if Background matches the format of a randomly-generated bio
-static function bool IsRandomBio(const string Background)
+static function bool HasRandomBio(XComGameState_Unit Unit)
 {
 	/*
 		All randomly-generated backgrounds follow the same format:
@@ -21,9 +21,11 @@ static function bool IsRandomBio(const string Background)
 	local string CountryOfOrigin, DateOfBirth, EmptyString, RemainingBackground;
 	local int i; // index of the next newline
 
-	QuoteLog("Background", Background);
+	RemainingBackground = Unit.GetBackground();
 
-	RemainingBackground = Background;
+	QuoteLog("Background", RemainingBackground);
+
+	
 
 	// get first line
 	i = InStr(RemainingBackground, "\n");

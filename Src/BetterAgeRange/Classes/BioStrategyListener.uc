@@ -14,7 +14,7 @@ event OnInit(UIScreen Screen)
 	`log("----BioParser calls----");
 	foreach Soldiers(Unit)
 	{
-		result = class'BioParser'.static.IsRandomBio(Unit.GetBackground());
+		result = class'BioParser'.static.HasRandomBio(Unit);
 		`log(Unit.GetFullName()@result);
 	}
 }
