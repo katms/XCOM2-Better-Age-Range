@@ -25,10 +25,6 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 
 	RemainingBackground = Unit.GetBackground();
 
-	QuoteLog("Background", RemainingBackground);
-
-	
-
 	// get first line
 	i = InStr(RemainingBackground, "\n");
 	if(INDEX_NONE == i)
@@ -37,8 +33,7 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 	}
 
 	CountryOfOrigin = Left(RemainingBackground, i);
-	QuoteLog("Country",CountryOfOrigin);
-
+	
 	// drop up to the \n
 	RemainingBackground = Split(RemainingBackground, "\n", true);
 	
@@ -51,8 +46,7 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 	}
 
 	DateOfBirth = Left(RemainingBackground, i);
-	QuoteLog("DoB",DateOfBirth);
-
+	
 	RemainingBackground = Split(RemainingBackground, "\n", true);
 
 	i = InStr(RemainingBackground, "\n");
@@ -64,11 +58,9 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 	}
 
 	EmptyString = Left(RemainingBackground, i);
-	QuoteLog("Newline",EmptyString);
-
+	
 	RemainingBackground = Split(RemainingBackground, "\n", true);
-	QuoteLog("Bio", RemainingBackground);
-
+	
 	// check that each line actually matched the expected format for each of them
 	// mainly by checking if they contain the localized labels
 
@@ -87,10 +79,6 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 			&& IsRandomBackground(Unit, RemainingBackground);
 }
 
-static function QuoteLog(const string tag, const string output)
-{
-	`log(tag@"'"$output$"'");
-}
 
 // strips <XGParam:StrValue0... etc> from localized strings
 // I assume none of the localizations I'm using are intended to display <
@@ -166,8 +154,6 @@ static function bool IsRandomBackground(XComGameState_Unit Unit, string Backgrou
 
 	GenericBackground = Repl(Background, CountryName, "<XGParam:StrValue0/!CountryName/>");
 	GenericBackground = Repl(GenericBackground, FirstName, "<XGParam:StrValue1/!FirstName/>");
-
-	QuoteLog("Generic background:", GenericBackground);
 
 	// check against all possible backgrounds for this unit
 	AllBackgrounds = GetAllBackgroundsForCharacter(Unit);
