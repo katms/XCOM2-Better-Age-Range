@@ -65,10 +65,41 @@ static function bool IsRandomBio(const string Background)
 	RemainingBackground = Split(RemainingBackground, "\n", true);
 	QuoteLog("Bio", RemainingBackground);
 
-	return true;
+	// check that each line actually matched the expected format for each of them
+	// mainly by checking if they contain the localized labels
+
+	return 
+			("" == EmptyString) // fastest check
+
+				// since the expected country of origin is known we could check further but I don't see the point
+			&& (INDEX_NONE != InStr(CountryOfOrigin, GetLabel(class'XLocalizedData'.default.CountryBackground)))
+
+				// I have no idea how GetDateString() works
+				// I want to support all localizations if possible
+				// so this doesn't get parsed any further either
+			&& (INDEX_NONE != InStr(DateOfBirth, GetLabel(class'XLocalizedData'.default.DateOfBirthBackground)))
+
+				// if the bio matches a random background
+			&& IsRandomBackground(RemainingBackground);
 }
 
 static function QuoteLog(const string tag, const string output)
 {
 	`log(tag@"'"$output$"'");
+}
+
+// strips <XGParam:StrValue0... etc> from localized strings
+// I assume none of the localizations I'm using are intended to display <
+static function string GetLabel(const string XGParamLoc)
+{
+	local int i;
+	i = InStr(XGParamLoc, "<XGParam:");
+	return Left(XGParamLoc, i);
+}
+
+// compares background against the possible random backgrounds
+// why did I have to make custom characters that matched the rest of the format...
+static function bool IsRandomBackground(string Background)
+{
+	return true;
 }
