@@ -50,7 +50,9 @@ event OnInit(UIScreen Screen)
 		}
 	}
 	GenerateDoBForNumUnits(HQPersonnel);
-	// todo: refresh the Commodity descriptions at HQ so the updated backstory is shown
+
+	// refresh UI descriptions
+	RefreshHQCommodityDescriptions();
 }
 
 // assign new birthday for the first n units in UnitRefs
@@ -74,6 +76,42 @@ function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, optional i
 		if(none != Unit)
 		{
 			class'AssignNewBirthday'.static.CheckUnit(Unit);
+		}
+	}
+}
+
+// find all HQ commodities that award a unit and refresh and description
+function RefreshHQCommodityDescriptions()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersResistance ResHQ;
+
+	local array<Commodity> Commodities;
+	local Commodity Item;
+	local XComGameState_Reward RewardState;
+
+	local XComGameState_Unit Unit;
+	local int i;
+
+	History = `XCOMHISTORY;
+
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+	Commodities = ResHQ.ResistanceGoods;
+	
+	// can't use find() so iterate by index so I have it when I need it
+	for(i = 0; i < Commodities.length; ++i)
+	{
+		Item = Commodities[i];
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(Item.RewardRef.ObjectID));
+		if(none != RewardState)
+		{
+			// check if the reward is a unit
+			Unit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+			if(none != Unit)
+			{
+				// write to Resistance HQ, not a copy
+				ResHQ.ResistanceGoods[i].Desc = Unit.GetBackground();
+			}
 		}
 	}
 }
