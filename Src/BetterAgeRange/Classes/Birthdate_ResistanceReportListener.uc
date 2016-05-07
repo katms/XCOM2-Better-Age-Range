@@ -15,9 +15,13 @@ event OnInit(UIScreen Screen)
 
 	// HQ personnel
 	local XComGameStateHistory History;
-	local int idx;
-	local XComGameState_Reward RewardState;
+	local int idx, j;
+	local XComGameState_Reward RewardState; // for both HQ and Black Market
 	local array<StateObjectReference> HQPersonnel, Rewards;
+
+	// Black Market personnel
+	local XComGameState_BlackMarket BlackMarket;
+	local array<StateObjectReference> BlackMarketGoods;
 
 	ReportScreen = UIResistanceReport(Screen);
 
@@ -53,6 +57,26 @@ event OnInit(UIScreen Screen)
 
 	// refresh UI descriptions
 	RefreshHQCommodityDescriptions();
+
+	// get black market personnel
+	BlackMarket = class'UIUtilities_Strategy'.static.GetBlackMarket();
+
+	// not all ForSaleItems/RewardStates represent new personnel
+	// but the easiest way to filter them is to forward everything
+	// and let GenerateDoB() check like it already does
+	for(j = 0; j < BlackMarket.ForSaleItems.length; ++j)
+	{
+		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(
+							BlackMarket.ForSaleItems[j].RewardRef.ObjectID));
+		if(none != RewardState)
+		{
+			BlackMarketGoods.AddItem(RewardState.RewardObjectReference);
+		}
+	}
+
+	GenerateDoBForNumUnits(BlackMarketGoods);
+	// don't update the description for these commodities
+	// since the black market doesn't use personnel background for that
 }
 
 // assign new birthday for the first n units in UnitRefs
