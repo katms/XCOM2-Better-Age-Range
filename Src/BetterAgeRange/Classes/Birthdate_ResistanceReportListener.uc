@@ -7,32 +7,41 @@ class Birthdate_ResistanceReportListener extends UIScreenListener;
 event OnInit(UIScreen Screen)
 {
 	local UIResistanceReport ReportScreen;
-	
+	local XComGameState_HeadquartersResistance ResHQ;
+	local int numNewRecruits;
+
 	ReportScreen = UIResistanceReport(Screen);
 
 	if(none == ReportScreen)
 	{
 		return;
 	}
-	GenerateDoBForNewRecruits(ReportScreen.RESHQ());
 
-}
-
-function GenerateDoBForNewRecruits(XComGameState_HeadquartersResistance ResHQ)
-{
-	local XComGameStateHistory History;
-	local array<StateObjectReference> RecruitPool;
-	local XComGameState_Unit Unit;
-	local int numNewRecruits, i;
-
-	History = `XCOMHISTORY;
-	RecruitPool = ResHQ.Recruits;
+	ResHQ = ReportScreen.RESHQ();
 	numNewRecruits = ResHQ.GetRefillNumRecruits();
 
 	// get the recruits added to the pool for this supply drop
-	for(i = 0; i < numNewRecruits; ++i)
+	GenerateDoBForNumUnits(ResHQ.Recruits, numNewRecruits);
+}
+
+// assign new birthday for the first n units in UnitRefs
+// if n = -1, do it for the whole array
+function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, optional int n = -1)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Unit Unit;
+	local int idx;
+
+	if(-1 == n)
 	{
-		Unit = XComGameState_Unit(History.GetGameStateForObjectID(RecruitPool[i].ObjectID));
+		n = UnitRefs.length;
+	}
+
+	History = `XCOMHISTORY;
+
+	for(idx = 0; idx < n; ++idx)
+	{
+		Unit = XComGameState_Unit(History.GetGameStateForObjectID(UnitRefs[idx].ObjectID));
 		if(none != Unit)
 		{
 			class'AssignNewBirthday'.static.CheckUnit(Unit);
