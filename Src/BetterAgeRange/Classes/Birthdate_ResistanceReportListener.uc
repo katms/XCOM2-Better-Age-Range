@@ -34,7 +34,7 @@ event OnInit(UIScreen Screen)
 	numNewRecruits = ResHQ.GetRefillNumRecruits();
 
 	// get the recruits added to the pool for this supply drop
-	GenerateDoBForNumUnits(ResHQ.Recruits, numNewRecruits);
+	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(ResHQ.Recruits, numNewRecruits);
 
 	/** 
 	get HQ personnel
@@ -53,7 +53,7 @@ event OnInit(UIScreen Screen)
 			HQPersonnel.AddItem(RewardState.RewardObjectReference);
 		}
 	}
-	GenerateDoBForNumUnits(HQPersonnel);
+	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(HQPersonnel);
 
 	// refresh UI descriptions
 	RefreshHQCommodityDescriptions();
@@ -74,34 +74,9 @@ event OnInit(UIScreen Screen)
 		}
 	}
 
-	GenerateDoBForNumUnits(BlackMarketGoods);
+	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(BlackMarketGoods);
 	// don't update the description for these commodities
 	// since the black market doesn't use personnel background for that
-}
-
-// assign new birthday for the first n units in UnitRefs
-// if n = -1, do it for the whole array
-function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, optional int n = -1)
-{
-	local XComGameStateHistory History;
-	local XComGameState_Unit Unit;
-	local int idx;
-
-	if(-1 == n)
-	{
-		n = UnitRefs.length;
-	}
-
-	History = `XCOMHISTORY;
-
-	for(idx = 0; idx < n; ++idx)
-	{
-		Unit = XComGameState_Unit(History.GetGameStateForObjectID(UnitRefs[idx].ObjectID));
-		if(none != Unit)
-		{
-			class'AssignNewBirthday'.static.CheckUnit(Unit);
-		}
-	}
 }
 
 // find all HQ commodities that award a unit and refresh and description

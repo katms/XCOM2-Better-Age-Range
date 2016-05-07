@@ -4,6 +4,33 @@
 
 class AssignNewBirthday extends Object;
 
+
+// assign new birthday for the first n units in UnitRefs
+// if n = -1, do it for the whole array
+static function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, optional int n = -1)
+{
+	local XComGameStateHistory History;
+	local XComGameState_Unit Unit;
+	local int idx;
+
+	if(-1 == n)
+	{
+		n = UnitRefs.length;
+	}
+
+	History = `XCOMHISTORY;
+
+	for(idx = 0; idx < n; ++idx)
+	{
+		Unit = XComGameState_Unit(History.GetGameStateForObjectID(UnitRefs[idx].ObjectID));
+		if(none != Unit)
+		{
+			CheckUnit(Unit);
+		}
+	}
+}
+
+
 // checks if the Unit should be given a new birthdate
 static function CheckUnit(XComGameState_Unit Unit)
 {
