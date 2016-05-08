@@ -6,7 +6,7 @@ class Birthdate_MissionRewardsListener extends UIScreenListener;
 
 event OnInit(UIScreen Screen)
 {
-	local UIRewardsRecap RewardScreen;
+	local UIMissionSummary MissionScreen;
 	local XComGameStateHistory History;
 	local XComGameState_MissionSite Mission;
 	local XComGameState_Reward RewardState;
@@ -15,13 +15,19 @@ event OnInit(UIScreen Screen)
 	//local X2RewardTemplate RewardTemplate;
 	local XComGameState_Unit Unit;
 
-	RewardScreen = UIRewardsRecap(Screen);
-	if(none == RewardScreen)
+	MissionScreen = UIMissionSummary(Screen);
+	if(none == MissionScreen)
 	{
 		return;
 	}
 	History = `XCOMHISTORY;
-	Mission = RewardScreen.GetMission();
+	// since MissionRef is still set for UIRewardsRecap (which appears later), it should be good here
+	Mission = XComGameState_MissionSite(History.GetGameStateForObjectID(`XCOMHQ.MissionRef.ObjectID));
+	if(none == Mission)
+	{
+		return;
+	}
+
 	Rewards = Mission.Rewards;
 
 	`log("logging mission rewards:"@Rewards.length);
@@ -36,6 +42,7 @@ event OnInit(UIScreen Screen)
 			{
 				`log("Awarded unit"@Unit.GetFullName());
 			}
+			// don't touch council soldiers, since they aren't newly generated
 			if('Reward_SoldierCouncil' != RewardState.GetMyTemplateName())
 			{
 				`log("Not a council soldier");
@@ -51,5 +58,8 @@ event OnInit(UIScreen Screen)
 
 defaultproperties
 {
-	ScreenClass = UIRewardsRecap;
+	// rewards are cleaned up by the time UIRewardsRecap is shown in strategy
+	// making it a bit harder to determine what the mission granted
+	// so use a UI for the end of tactical missions
+	ScreenClass = UIMissionSummary;
 }
