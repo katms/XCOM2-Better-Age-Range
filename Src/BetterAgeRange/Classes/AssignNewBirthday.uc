@@ -2,7 +2,11 @@
 // 
 // Handles overwriting the old bio
 
-class AssignNewBirthday extends Object;
+class AssignNewBirthday extends Object
+	config(Birthdays);
+
+var config int MIN_AGE;
+var config int MAX_AGE;
 
 
 // assign new birthday for the first n units in UnitRefs
@@ -68,7 +72,7 @@ static function string GenerateDateOfBirth()
 	LocTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));	
 
 	NewBirthday.m_iMonth = Rand(12) + 1;
-	NewBirthday.m_iDay = (NewBirthday.m_iMonth == 2 ? Rand(27) : Rand(30)) + 1;
+	NewBirthday.m_iDay = (NewBirthday.m_iMonth == 2 ? Rand(default.MIN_AGE) : Rand(default.MAX_AGE)) + 1;
 
 	// 16-20 has no overlap with the default 25-35 age range, so I can make sure it works
 	NewBirthday.m_iYear = class'X2StrategyGameRulesetDataStructures'.default.START_YEAR - int(RandRange(16, 20));
