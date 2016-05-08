@@ -5,7 +5,9 @@
 class BioParser extends Object;
 
 // returns true if Background matches the format of a randomly-generated bio
-static function bool HasRandomBio(XComGameState_Unit Unit)
+// Unit is needed for the background, name, and country
+// BgIdx will be set to the index of the random background in the relevant array
+static function bool HasRandomBio(XComGameState_Unit Unit, out int BgIdx)
 {
 	/*
 		All randomly-generated backgrounds follow the same format:
@@ -64,7 +66,7 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 	// check that each line actually matched the expected format for each of them
 	// mainly by checking if they contain the localized labels
 
-	return 
+	if(
 			("" == EmptyString) // fastest check
 
 				// since the expected country of origin is known we could check further but I don't see the point
@@ -74,9 +76,17 @@ static function bool HasRandomBio(XComGameState_Unit Unit)
 				// I want to support all localizations if possible
 				// so this doesn't get parsed any further either
 			&& (INDEX_NONE != InStr(DateOfBirth, GetLabel(class'XLocalizedData'.default.DateOfBirthBackground)))
-
-				// if the bio matches a random background
-			&& IsRandomBackground(Unit, RemainingBackground);
+		)
+	{
+		// if the bio matches a random background
+		BgIdx = IsRandomBackground(Unit, RemainingBackground);
+		return (INDEX_NONE != BgIdx);
+	}
+	// any line failed to match
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -141,8 +151,10 @@ static function array<string> GetAllBackgroundsForCharacter(XComGameState_Unit U
 
 	* @param Unit			needed to get CountryName and first name
 	* @param Background		Unit.GetBackground() minus the header, since we've already isolated that part
+
+	* @return idx			the index of the generic background
 */
-static function bool IsRandomBackground(XComGameState_Unit Unit, string Background)
+static function int IsRandomBackground(XComGameState_Unit Unit, string Background)
 {
 	local string CountryName, FirstName, GenericBackground;
 	local array<string> AllBackgrounds;
@@ -160,5 +172,5 @@ static function bool IsRandomBackground(XComGameState_Unit Unit, string Backgrou
 
 	idx = AllBackgrounds.find(GenericBackground);
 
-	return idx != INDEX_NONE;
+	return idx ; //!= INDEX_NONE;
 }

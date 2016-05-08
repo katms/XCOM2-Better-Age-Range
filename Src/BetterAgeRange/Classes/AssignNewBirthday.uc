@@ -38,7 +38,8 @@ static function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, opt
 // checks if the Unit should be given a new birthdate
 static function CheckUnit(XComGameState_Unit Unit)
 {
-	if(class'BioParser'.static.HasRandomBio(Unit))
+	local int BackgroundIndex;
+	if(class'BioParser'.static.HasRandomBio(Unit, BackgroundIndex))
 	{
 		`log(Unit.GetFullName());
 		`log(Unit.GetBackground());
