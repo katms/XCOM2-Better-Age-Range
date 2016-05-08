@@ -22,4 +22,20 @@ static event OnLoadedSavedGame()
 /// Called when the player starts a new campaign while this DLC / Mod is installed
 /// </summary>
 static event InstallNewCampaign(XComGameState StartState)
-{}
+{
+
+	// check backgrounds of every crewmember and recruit at the start of a campaign
+	local XComGameState_HeadquartersXCom XHQ;
+	local XComGameState_HeadquartersResistance ResHQ;
+
+	XHQ = `XCOMHQ;
+	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
+
+	// in theory we only need to do this for soldiers
+	// since everyone else's background is only ever visible from Resistance HQ before they're bought
+	// but the game doesn't start with any non-soldier crew
+	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(XHQ.Crew);
+
+	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(ResHQ.Recruits);
+	
+}
