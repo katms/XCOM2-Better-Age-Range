@@ -38,19 +38,12 @@ event OnInit(UIScreen Screen)
 		{
 			`log(RewardState.GetMyTemplateName());
 			Unit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
-			if(none != Unit)
+			// don't touch council soldiers, since they aren't newly generated
+			if(none != Unit && 'Reward_SoldierCouncil' != RewardState.GetMyTemplateName())
 			{
 				`log("Awarded unit"@Unit.GetFullName());
+				class'AssignNewBirthday'.static.CheckUnit(Unit);
 			}
-			// don't touch council soldiers, since they aren't newly generated
-			if('Reward_SoldierCouncil' != RewardState.GetMyTemplateName())
-			{
-				`log("Not a council soldier");
-			}
-		}
-		else
-		{
-			`log("Not a reward state");
 		}
 	}
 }
