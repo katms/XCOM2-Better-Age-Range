@@ -40,8 +40,6 @@ static function CheckUnit(XComGameState_Unit Unit)
 {
 	if(class'BioParser'.static.HasRandomBio(Unit))
 	{
-		`log(Unit.GetFullName());
-		`log(Unit.GetBackground());
 		class'AssignNewBirthday'.static.GiveNewDoB(Unit);
 	}
 }
@@ -58,7 +56,6 @@ static function GiveNewDoB(XComGameState_Unit Unit)
 
 	// reassemble the whole thing, based on Unit.GenerateBackground()
 	NewBackground = CountryOfOrigin$"\n"$NewDoB$"\n\n"$Backstory;
-	`log(NewBackground);
 	Unit.SetBackground(NewBackground);
 }
 

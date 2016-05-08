@@ -30,18 +30,16 @@ event OnInit(UIScreen Screen)
 
 	Rewards = Mission.Rewards;
 
-	`log("logging mission rewards:"@Rewards.length);
+	// find personnel rewards
 	for(i = 0; i < Rewards.Length; ++i)
 	{
 		RewardState = XComGameState_Reward(History.GetGameStateForObjectID(Rewards[i].ObjectID));
 		if(none != RewardState)
 		{
-			`log(RewardState.GetMyTemplateName());
 			Unit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
 			// don't touch council soldiers, since they aren't newly generated
 			if(none != Unit && 'Reward_SoldierCouncil' != RewardState.GetMyTemplateName())
 			{
-				`log("Awarded unit"@Unit.GetFullName());
 				class'AssignNewBirthday'.static.CheckUnit(Unit);
 			}
 		}
