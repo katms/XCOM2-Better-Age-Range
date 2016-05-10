@@ -5,9 +5,51 @@
 class AssignNewBirthday extends Object
 	config(Birthdays);
 
+
+struct BackgroundAllowedAges
+{
+	// the index of the generic background
+	var int BackgroundIndex;
+
+	// minimum possible age for this background
+	// ...with some room for error since we're only comparing against the (starting) year
+	var int Min;
+
+	// maximum possible age
+	var int Max;
+};
+
+
 var config int MIN_AGE;
 var config int MAX_AGE;
 
+// assume male and female backgrounds are the same but with the pronouns changed
+var config array<BackgroundAllowedAges> SoldierAges;
+var config array<BackgroundAllowedAges> EngineerAges;
+var config array<BackgroundAllowedAges> ScientistAges;
+
+// return the configured array for this character
+static function array<BackgroundAllowedAges> GetConfiguredAges(XComGameState_Unit Unit)
+{
+	local array<BackgroundAllowedAges> EmptyArray;
+	if(Unit.IsASoldier())
+	{
+		return default.SoldierAges;
+	}
+	else if(Unit.IsAnEngineer())
+	{
+		return default.EngineerAges;
+	}
+	else if(Unit.IsAScientist())
+	{
+		return default.ScientistAges;
+	}
+	else
+	{
+		EmptyArray.Length = 0;
+		return EmptyArray;
+	}
+}
 
 // assign new birthday for the first n units in UnitRefs
 // if n = -1, do it for the whole array
