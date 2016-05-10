@@ -85,11 +85,11 @@ static function CheckUnit(XComGameState_Unit Unit)
 	{
 		`log(Unit.GetFullName());
 		`log(Unit.GetBackground());
-		class'AssignNewBirthday'.static.GiveNewDoB(Unit);
+		class'AssignNewBirthday'.static.GiveNewDoB(Unit, -1, -1);
 	}
 }
 
-static function GiveNewDoB(XComGameState_Unit Unit)
+static function GiveNewDoB(XComGameState_Unit Unit, int MinAge, int MaxAge)
 {
 	local string CountryOfOrigin, Backstory, OldBackground, NewDoB, NewBackground;
 
@@ -97,7 +97,7 @@ static function GiveNewDoB(XComGameState_Unit Unit)
 	CountryOfOrigin = class'BioParser'.static.GetCountryOfOrigin(OldBackground);
 	Backstory = class'BioParser'.static.GetBackstory(OldBackground);
 
-	NewDoB = GenerateDateOfBirth();
+	NewDoB = GenerateDateOfBirth(MinAge, MaxAge);
 
 	// reassemble the whole thing, based on Unit.GenerateBackground()
 	NewBackground = CountryOfOrigin$"\n"$NewDoB$"\n\n"$Backstory;
@@ -106,16 +106,26 @@ static function GiveNewDoB(XComGameState_Unit Unit)
 }
 
 // copied from XComGameState_Unit::GenerateBackground() with some numbers changed
-static function string GenerateDateOfBirth()
+static function string GenerateDateOfBirth(int MinAge, int MaxAge)
 {
 	local XGParamTag LocTag;
 	local TDateTime NewBirthday;
 	local string DateOfBirth;
 
+	// fallback
+	if(-1 == MinAge)
+	{
+		MinAge = default.MIN_AGE;
+	}
+	if(-1 == MaxAge)
+	{
+		MaxAge = default.MAX_AGE;
+	}
+
 	LocTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));	
 
 	NewBirthday.m_iMonth = Rand(12) + 1;
-	NewBirthday.m_iDay = (NewBirthday.m_iMonth == 2 ? Rand(default.MIN_AGE) : Rand(default.MAX_AGE)) + 1;
+	NewBirthday.m_iDay = (NewBirthday.m_iMonth == 2 ? Rand(MinAge) : Rand(MaxAge)) + 1;
 
 	// 16-20 has no overlap with the default 25-35 age range, so I can make sure it works
 	NewBirthday.m_iYear = class'X2StrategyGameRulesetDataStructures'.default.START_YEAR - int(RandRange(16, 20));
