@@ -139,6 +139,12 @@ static function string GenerateDateOfBirth(int MinAge, int MaxAge)
 	{
 		MaxAge = default.MAX_AGE;
 	}
+
+	// make sure min < max
+	if(MinAge > MaxAge)
+	{
+		MaxAge = MinAge + 1;
+	}
 	
 	LocTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));	
 
