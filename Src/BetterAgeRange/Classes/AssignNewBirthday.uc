@@ -86,12 +86,24 @@ static function GenerateDoBForNumUnits(array<StateObjectReference> UnitRefs, opt
 // checks if the Unit should be given a new birthdate
 static function CheckUnit(XComGameState_Unit Unit)
 {
-	local int BackgroundIndex;
+	local int BackgroundIndex, RangeIndex;
+	local array<BackgroundAllowedAges> BackstoryRanges;
+	local BackgroundAllowedAges Range;
 	if(class'BioParser'.static.HasRandomBio(Unit, BackgroundIndex))
 	{
 		`log(Unit.GetFullName());
 		`log(Unit.GetBackground());
-		class'AssignNewBirthday'.static.GiveNewDoB(Unit, -1, -1);
+		
+		BackstoryRanges = GetConfiguredAges(Unit);
+		
+		RangeIndex = BackstoryRanges.find('BackgroundIndex', BackgroundIndex);
+		if(INDEX_NONE != RangeIndex)
+		{
+			Range = BackstoryRanges[RangeIndex];
+		}
+		
+
+		class'AssignNewBirthday'.static.GiveNewDoB(Unit, Range.Min, Range.Max);
 	}
 }
 
@@ -127,7 +139,7 @@ static function string GenerateDateOfBirth(int MinAge, int MaxAge)
 	{
 		MaxAge = default.MAX_AGE;
 	}
-
+	
 	LocTag = XGParamTag(`XEXPANDCONTEXT.FindTag("XGParam"));	
 
 	NewBirthday.m_iMonth = Rand(12) + 1;
