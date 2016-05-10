@@ -17,6 +17,12 @@ struct BackgroundAllowedAges
 
 	// maximum possible age
 	var int Max;
+
+	structdefaultproperties
+	{
+		Min=-1;
+		Max=-1;
+	}
 };
 
 
