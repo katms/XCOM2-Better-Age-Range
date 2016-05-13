@@ -10,7 +10,10 @@ event OnInit(UIScreen Screen)
 	local XComGameStateHistory History;
 	local XComGameState_PointOfInterest POIState;
 
+	local StateObjectReference RewardRef;
 	local XComGameState_Reward RewardState;
+
+	local XComGameState_Unit Unit;
 
 	Alert = UIAlert(Screen);
 
@@ -23,22 +26,23 @@ event OnInit(UIScreen Screen)
 	switch(Alert.eAlert)
 	{
 		case eAlert_ScanComplete:
-			`log("Complete POI");
 			History = `XCOMHISTORY;
 			POIState = XComGameState_PointOfInterest(History.GetGameStateForObjectID(Alert.POIRef.ObjectID));
-			`log(POIState.RewardRefs.length);
-			if(POIState.RewardRefs.length > 0)
+
+			// check if the POI awards any units
+			foreach POIState.RewardRefs(RewardRef)
 			{
-				RewardState = XComGameState_Reward(History.GetGameStateForObjectID(POIState.RewardRefs[0].ObjectID));
-				`log(RewardState);
+				RewardState = XComGameState_Reward(History.GetGameStateForObjectID(RewardRef.ObjectID));
+				if(none != RewardState)
+				{
+					Unit = XComGameState_Unit(History.GetGameStateForObjectID(RewardState.RewardObjectReference.ObjectID));
+					if(none != Unit)
+					{
+						class'AssignNewBirthday'.static.CheckUnit(Unit);
+					}
+				}
 			}
-			// rewardrefs only gets cleared out when refilled I think
-			// but what about the rewards they refer to
-			// template.rewardtypes()
-			// 
 			break;
-		default:
-			`log(Alert.eAlert);
 	}
 }
 
