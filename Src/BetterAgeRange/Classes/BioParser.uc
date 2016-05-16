@@ -174,3 +174,45 @@ static function int IsRandomBackground(XComGameState_Unit Unit, string Backgroun
 
 	return idx ; //!= INDEX_NONE;
 }
+
+
+/*
+	check if the unit was drawn from the character pool, and if their bio was imported as well (ie. it's not blank)
+	could happen if the soldier was randomly generated in another save and added to the character pool
+	
+	prevents character pool units from getting a new date of birth whenever they show up
+
+	also prevents it from getting overwritten if the player handpicked a date of birth,
+	since the mod doesn't check the old DoB before overwriting it
+*/
+static function bool HasCharPoolBio(XComGameState_Unit Unit)
+{
+	local array<XComGameState_Unit> CharacterPool;
+	local XComGameState_Unit Character;
+	local string FName, CFName, LName, CLName, Nickname, CNickname;
+
+	if(!Unit.IsASoldier()) // doesn't apply to engineers and scientists
+	{
+		return false;
+	}
+
+	CharacterPool = `CHARACTERPOOLMGR.CharacterPool;
+	FName = Unit.GetFirstName();
+	LName = Unit.GetLastName();
+	NickName = Unit.GetNickname();
+
+	// find a character with the same name
+	foreach CharacterPool(Character)
+	{
+		CFName = Character.GetFirstName();
+		CLName = Character.GetLastName();
+		CNickname = Character.GetNickName();
+		if(FName == CFName && LName == CLName && ("" == CNickName || Nickname == CNickname))
+		{
+			// compare backgrounds
+			return Unit.GetBackground() == Character.GetBackground();
+		}
+	}
+
+	return false;
+}

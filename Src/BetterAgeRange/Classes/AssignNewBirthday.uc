@@ -89,7 +89,7 @@ static function CheckUnit(XComGameState_Unit Unit)
 	local int BackgroundIndex, RangeIndex;
 	local array<BackgroundAllowedAges> BackstoryRanges;
 	local BackgroundAllowedAges Range;
-	if(class'BioParser'.static.HasRandomBio(Unit, BackgroundIndex))
+	if(class'BioParser'.static.HasRandomBio(Unit, BackgroundIndex) && !class'BioParser'.static.HasCharPoolBio(Unit))
 	{
 		// check if we have a configured range for this backstory
 		BackstoryRanges = GetConfiguredAges(Unit);
