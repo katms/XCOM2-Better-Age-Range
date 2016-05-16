@@ -2,7 +2,10 @@
 // 
 // Helper methods for parsing a soldier's biography.
 
-class BioParser extends Object;
+class BioParser extends Object
+	config(Birthday);
+
+var config bool SKIP_CHARACTERPOOL_CHECK;
 
 // returns true if Background matches the format of a randomly-generated bio
 // Unit is needed for the background, name, and country
@@ -191,7 +194,7 @@ static function bool HasCharPoolBio(XComGameState_Unit Unit)
 	local XComGameState_Unit Character;
 	local string FName, CFName, LName, CLName, Nickname, CNickname;
 
-	if(!Unit.IsASoldier()) // doesn't apply to engineers and scientists
+	if(none == Unit || default.SKIP_CHARACTERPOOL_CHECK || !Unit.IsASoldier()) // doesn't apply to engineers and scientists
 	{
 		return false;
 	}
