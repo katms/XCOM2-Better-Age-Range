@@ -28,6 +28,9 @@ static event InstallNewCampaign(XComGameState StartState)
 	local XComGameState_HeadquartersXCom XHQ;
 	local XComGameState_HeadquartersResistance ResHQ;
 
+	// really? I can't call find() on a return value?
+	local array<string> DLCNames;
+
 	XHQ = `XCOMHQ;
 	ResHQ = class'UIUtilities_Strategy'.static.GetResistanceHQ();
 
@@ -38,4 +41,49 @@ static event InstallNewCampaign(XComGameState StartState)
 
 	class'AssignNewBirthday'.static.GenerateDoBForNumUnits(ResHQ.Recruits);
 	
+
+	// special handling for Resistance Warrior veteran
+
+	// check the DLC is installed
+	DLCNames = class'Helpers'.static.GetInstalledDLCNames();
+	if(INDEX_NONE != DLCNames.find("XCom_DLC_Day0"))
+	{
+		HandleOldWarVeteran();
+	}
+}
+
+// since I can't check against the localized bio, find the first extra solider wearing the DLC armor and assume it's them
+static function HandleOldWarVeteran()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XHQ;
+
+	local XComGameState_Unit Unit;
+	local XComGameState_Item Armor;
+	local int i;
+
+	local BackgroundAllowedAges Range;
+
+	History = `XCOMHISTORY;
+	XHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	// start at NUM_STARTING_SOLDIERS+
+	// since the veteran is added after those are created
+	for(i = class'XGTacticalGameCore'.default.NUM_STARTING_SOLDIERS; i < XHQ.Crew.Length; ++i)
+	{
+		Unit = XComGameState_Unit(History.GetGameStateForObjectID(XHQ.Crew[i].ObjectID));
+		if(none == Unit || !Unit.IsASoldier())
+		{
+			continue;
+		}
+
+		// check for DLC armor
+		Armor = Unit.GetItemInSlot(eInvSlot_Armor);
+		if(none != Armor && 'KevlarArmor_DLC_Day0' == Armor.GetMyTemplate().DataName)
+		{
+			Range = class'AssignNewBirthday'.default.OldWarVeteran;
+			class'AssignNewBirthday'.static.GiveNewDoB(Unit, Range.Min, Range.Max);
+			return;
+		}
+	}
 }

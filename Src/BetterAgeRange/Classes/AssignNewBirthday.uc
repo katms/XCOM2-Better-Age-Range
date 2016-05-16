@@ -22,6 +22,7 @@ struct BackgroundAllowedAges
 	{
 		Min=-1;
 		Max=-1;
+		BackgroundIndex=-1;
 	}
 };
 
@@ -33,6 +34,9 @@ var config int MAX_AGE;
 var config array<BackgroundAllowedAges> SoldierAges;
 var config array<BackgroundAllowedAges> EngineerAges;
 var config array<BackgroundAllowedAges> ScientistAges;
+
+// Resistance Warrior veteran
+var config BackgroundAllowedAges OldWarVeteran;
 
 // return the configured array for this character
 static function array<BackgroundAllowedAges> GetConfiguredAges(XComGameState_Unit Unit)
