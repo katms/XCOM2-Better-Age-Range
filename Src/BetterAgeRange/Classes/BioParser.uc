@@ -3,7 +3,7 @@
 // Helper methods for parsing a soldier's biography.
 
 class BioParser extends Object
-	config(Birthday);
+	config(Birthdays);
 
 var config bool SKIP_CHARACTERPOOL_CHECK;
 
