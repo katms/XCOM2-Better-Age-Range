@@ -154,7 +154,7 @@ static function string GenerateDateOfBirth(int MinAge, int MaxAge)
 	NewBirthday.m_iMonth = Rand(12) + 1;
 	NewBirthday.m_iDay = (NewBirthday.m_iMonth == 2 ? Rand(27) : Rand(30)) + 1;
 
-	NewBirthday.m_iYear = class'X2StrategyGameRulesetDataStructures'.default.START_YEAR - int(RandRange(default.MIN_AGE, default.Max_AGE));
+	NewBirthday.m_iYear = class'X2StrategyGameRulesetDataStructures'.default.START_YEAR - int(RandRange(MinAge, MaxAge));
 	LocTag.StrValue0 = class'X2StrategyGameRulesetDataStructures'.static.GetDateString(NewBirthday);
 
 	DateOfBirth = `XEXPAND.ExpandString(class'XLocalizedData'.default.DateOfBirthBackground);
