@@ -27,6 +27,13 @@ static function bool HasRandomBio(XComGameState_Unit Unit, out int BgIdx)
 	*/
 	local string CountryOfOrigin, DateOfBirth, EmptyString, RemainingBackground;
 	local int i; // index of the next newline
+	local X2CountryTemplate CountryTemplate;
+
+	CountryTemplate = Unit.GetCountryTemplate();
+	if(none == Country Template || "" == CountryTemplate.DisplayNameWithArticleLower || "" == Unit.GetFirstName())
+	{
+		return false;
+	}
 
 	RemainingBackground = Unit.GetBackground();
 
