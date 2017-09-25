@@ -32,6 +32,10 @@ var config int MAX_AGE;
 
 // assume male and female backgrounds are the same but with the pronouns changed
 var config array<BackgroundAllowedAges> SoldierAges;
+var config array<BackgroundAllowedAges> ReaperAges;
+var config array<BackgroundAllowedAges> SkirmisherAges;
+var config array<BackgroundAllowedAges> TemplarAges;
+
 var config array<BackgroundAllowedAges> EngineerAges;
 var config array<BackgroundAllowedAges> ScientistAges;
 
@@ -44,6 +48,21 @@ static function array<BackgroundAllowedAges> GetConfiguredAges(XComGameState_Uni
 	local array<BackgroundAllowedAges> EmptyArray;
 	if(Unit.IsSoldier())
 	{
+		if(Unit.IsResistanceHero())
+		{
+			if('ReaperSoldier' == Unit.GetMyTemplateName())
+			{
+				return default.ReaperAges;
+			}
+			else if('SkirmisherSoldier' == Unit.GetMyTemplateName())
+			{
+				return default.SkirmisherAges;
+			}
+			else if('TemplarSoldier' == Unit.GetMyTemplateName())
+			{
+				return default.TemplarAges;
+			}
+		}
 		return default.SoldierAges;
 	}
 	else if(Unit.IsEngineer())
