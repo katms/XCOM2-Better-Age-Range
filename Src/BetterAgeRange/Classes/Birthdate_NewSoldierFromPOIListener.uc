@@ -9,6 +9,7 @@ event OnInit(UIScreen Screen)
 	local UIAlert Alert;
 	local XComGameStateHistory History;
 	local XComGameState_PointOfInterest POIState;
+	local DynamicPropertySet DisplayPropertySet;
 
 	local StateObjectReference RewardRef;
 	local XComGameState_Reward RewardState;
@@ -22,12 +23,13 @@ event OnInit(UIScreen Screen)
 		return;
 	}
 
-	// it doesn't like an equality comparison here?
-	switch(Alert.eAlert)
+	switch(Alert.eAlertName)
 	{
-		case eAlert_ScanComplete:
+		case 'eAlert_ScanComplete':
 			History = `XCOMHISTORY;
-			POIState = XComGameState_PointOfInterest(History.GetGameStateForObjectID(Alert.POIRef.ObjectID));
+			POIState = XComGameState_PointOfInterest(History.GetGameStateForObjectID(
+					class'X2StrategyGameRulesetDataStructures'.static.GetDynamicIntProperty(
+					DisplayPropertySet, 'POIRef')));
 
 			// check if the POI awards any units
 			foreach POIState.RewardRefs(RewardRef)

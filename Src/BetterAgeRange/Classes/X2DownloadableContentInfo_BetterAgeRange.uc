@@ -72,7 +72,7 @@ static function HandleOldWarVeteran()
 	for(i = class'XGTacticalGameCore'.default.NUM_STARTING_SOLDIERS; i < XHQ.Crew.Length; ++i)
 	{
 		Unit = XComGameState_Unit(History.GetGameStateForObjectID(XHQ.Crew[i].ObjectID));
-		if(none == Unit || !Unit.IsASoldier())
+		if(none == Unit || !Unit.IsSoldier())
 		{
 			continue;
 		}

@@ -201,7 +201,7 @@ static function bool HasCharPoolBio(XComGameState_Unit Unit)
 	local XComGameState_Unit Character;
 	local string FName, CFName, LName, CLName, Nickname, CNickname;
 
-	if(none == Unit || default.SKIP_CHARACTERPOOL_CHECK || !Unit.IsASoldier()) // doesn't apply to engineers and scientists
+	if(none == Unit || default.SKIP_CHARACTERPOOL_CHECK || !Unit.IsSoldier()) // doesn't apply to engineers and scientists
 	{
 		return false;
 	}

@@ -42,15 +42,15 @@ var config BackgroundAllowedAges OldWarVeteran;
 static function array<BackgroundAllowedAges> GetConfiguredAges(XComGameState_Unit Unit)
 {
 	local array<BackgroundAllowedAges> EmptyArray;
-	if(Unit.IsASoldier())
+	if(Unit.IsSoldier())
 	{
 		return default.SoldierAges;
 	}
-	else if(Unit.IsAnEngineer())
+	else if(Unit.IsEngineer())
 	{
 		return default.EngineerAges;
 	}
-	else if(Unit.IsAScientist())
+	else if(Unit.IsScientist())
 	{
 		return default.ScientistAges;
 	}
