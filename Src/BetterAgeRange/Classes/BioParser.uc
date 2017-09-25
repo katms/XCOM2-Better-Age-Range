@@ -125,6 +125,17 @@ static function string GetCountryOfOrigin(const string background)
 	}
 }
 
+
+// resistance heroes are generated with a random country and then reassigned to their faction
+// some backstories use the original country's name so copy it from the header
+static function string GetCountryNameFromHeader(const string background)
+{
+	local string line;
+	line = GetCountryOfOrigin(background);
+	return Mid(line, Len(GetLabel(class'XLocalizedData'.default.CountryBackground)));
+}
+}
+
 // grab the backstory sans header
 static function string GetBackstory(const string background)
 {
@@ -173,6 +184,11 @@ static function int IsRandomBackground(XComGameState_Unit Unit, string Backgroun
 	// reverse-engineer the generic localized background (replace first name and country name)
 	FirstName = Unit.GetFirstName();
 	CountryName = Unit.GetCountryTemplate().DisplayNameWithArticleLower;
+
+	if(Unit.IsResistanceHero())
+	{
+		CountryName = GetCountryNameFromHeader(Unit.GetBackground());
+	}
 
 	// safety check
 	if("" != CountryName)
