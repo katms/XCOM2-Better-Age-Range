@@ -174,7 +174,11 @@ static function int IsRandomBackground(XComGameState_Unit Unit, string Backgroun
 	FirstName = Unit.GetFirstName();
 	CountryName = Unit.GetCountryTemplate().DisplayNameWithArticleLower;
 
-	GenericBackground = Repl(Background, CountryName, "<XGParam:StrValue0/!CountryName/>");
+	// safety check
+	if("" != CountryName)
+	{
+		GenericBackground = Repl(Background, CountryName, "<XGParam:StrValue0/!CountryName/>");
+	}
 	GenericBackground = Repl(GenericBackground, FirstName, "<XGParam:StrValue1/!FirstName/>");
 
 	// check against all possible backgrounds for this unit
